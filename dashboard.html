@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SASTRA Library Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scrollbar-width: auto;
+      scrollbar-color: #5C4033 #cbeacc;
+    }
+
+    ::-webkit-scrollbar {
+      width: 14px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #cbeacc;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #5C4033;
+      border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Libre Baskerville', serif;
+      background: #ffffff;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+	  background: #5C4033;
+      color: #f5f3e7;
+      padding: 1rem 2rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+    }
+	
+	.nav-center {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  text-align: center;
+	}
+
+    .menu-btn,
+    .user-btn {
+      background: none;
+      border: none;
+      color: #f5f3e7;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+	
+	.menu-btn {
+	  background: #b7e2b1; /* light green */
+	  border: 2px solid #5C4033; /* brown border */
+	  border-radius: 6px;
+	  color: #5C4033;  /* brown icon */
+	  font-size: 1.5rem;
+	  cursor: pointer;
+	  padding: 0.3rem 0.6rem;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  box-shadow: 0 4px 8px rgba(92, 64, 51, 0.2);
+	  transition: background 0.3s ease;
+	}
+	
+	.menu-btn:hover {
+	  background: #a4d69f; /* slightly darker green on hover */
+	}
+
+    .title-time {
+	  display: flex;
+	  align-items: center;
+	  gap: 1rem;
+	}
+
+	.library-title {
+	  font-size: 1.1rem;
+	  font-weight: bold;
+	  color: #f5f3e7;
+	  white-space: nowrap;
+	}
+
+	.datetime {
+	  font-size: 0.95rem;
+	  font-weight: 500;
+	  margin-left: 0.8rem;
+	  color: #f0f0f0;
+	}
+	
+	.user-btn {
+	  display: flex;
+	  align-items: center;
+	  background-color: #b7e2b1;
+	  color: #203020;
+	  font-weight: 600;
+	  padding: 0.3rem 0.9rem;
+	  border-radius: 1.6rem;
+	  font-size: 0.95rem;
+	  gap: 0.5rem;
+	  cursor: pointer;
+	  border: 1px solid #7bb36c; /* visible subtle green border */
+	  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+	  transition: background 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.user-btn:hover {
+	  background-color: #a8da9c;
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+	}
+
+	.user-name {
+	  font-size: 1.05rem;  /* Only increases the text */
+	  color: #1e2b1e;
+	}
+
+	.user-icon {
+	  font-size: 1.1rem;
+	}
+	
+	.user-dropdown {
+	  min-width: 320px; /* increase width */
+	  padding: 0.8rem 1.2rem;
+	  background: #b7e2b1;
+	  border-radius: 10px;
+	  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	.user-dropdown p {
+	  margin: 0.4rem 0;
+	  font-size: 0.95rem;
+	  white-space: nowrap;       /* don't wrap */
+	  overflow: visible;         /* let text be seen */
+	  text-overflow: unset;      /* no ellipsis */
+	  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+	  padding-bottom: 0.5rem;
+	}
+
+	.user-dropdown p:last-child {
+	  border-bottom: none;
+	}
+
+    .dropdown-menu,
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background: #eafce7;
+      border-radius: 8px;
+      border: 1px solid #b7e2b1;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      margin-top: 0.5rem;
+      z-index: 50;
+      padding: 0.8rem;
+      width: 240px;
+    }
+
+    .nav-left .dropdown-menu {
+      left: 2rem;
+    }
+
+    .nav-right .user-dropdown {
+      right: 2rem;
+    }
+
+    .dropdown-menu a,
+    .user-dropdown p {
+      display: block;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #d3f3cb;
+      color: #203020;
+      text-decoration: none;
+    }
+
+    .dropdown-menu a:last-child,
+    .user-dropdown p:last-child {
+      border-bottom: none;
+    }
+
+    .nav-left.active .dropdown-menu,
+    .nav-right.active .user-dropdown {
+      display: block;
+    }
+
+    .dashboard-section {
+      padding: 2rem 2rem 0.5rem;
+      background: #ffffff;
+    }
+
+    .quote-box {
+      font-style: italic;
+      font-size: 0.9rem;
+      text-align: right;
+      margin-bottom: 1.2rem;
+      padding-right: 1rem;
+      color: #444;
+    }
+
+    .welcome-board {
+	  background: #fff;
+	  padding: 1.8rem 2rem;
+	  border: 2px solid #b7e2b1;
+	  border-radius: 1rem;
+	  box-shadow: 0 0 5px rgba(183, 226, 177, 0.6); /* green glow */
+	  text-align: center;
+	  margin-bottom: 2rem;
+	}
+
+
+    .welcome-board h2 {
+      font-size: 1.6rem;
+      color: #2c3e50;
+    }
+
+	.search-tab {
+	  max-width: 1130px;
+	  margin: 0 auto 3rem;
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 1rem;
+	  background: #fff;
+	  padding: 1rem;
+	  border-radius: 1rem;
+	  border: 2px solid #b7e2b1;
+	  box-shadow: 0 0 30px rgba(183, 226, 177, 0.6);
+	  justify-content: center;
+	}
+
+	.search-tab input {
+	  padding: 0.7rem 1rem;
+	  border-radius: 8px;
+	  border: 1.5px solid #b7e2b1;
+	  font-size: 1rem;
+	  flex: 1 1 200px;
+	  min-width: 200px;
+	}
+	
+	.search-tab select {
+	  flex: 1.2;  /* REDUCED this from higher value */
+	  padding: 0.6rem 0.8rem;
+	  border: 1px solid #b7e2b1;
+	  border-radius: 10px;
+	  font-size: 0.95rem;
+	  background-color: #fff;
+	  max-width: 160px; 
+	}
+
+	.search-tab button {
+	  background: #b7e2b1;
+	  border: none;
+	  padding: 0.75rem 1.5rem;
+	  border-radius: 8px;
+	  font-size: 1.2rem;
+	  cursor: pointer;
+	  color: #2c3e50;
+	  transition: 0.3s;
+	  flex: 0 0 auto;
+	}
+
+	.search-tab button:hover {
+	  background: #a1d89d;
+	}
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 5px rgba(183, 226, 177, 0.5);
+      border: 2px solid #b7e2b1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #2c3e50;
+      transition: 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 30px rgba(183, 226, 177, 0.7);
+    }
+
+    .log-return-fee {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .log-box, .return-box, .fee-box {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 5px rgba(183, 226, 177, 0.3);
+      border: 2px solid #b7e2b1;
+    }
+
+    footer {
+      position: relative;
+      height: 150px;
+    }
+
+    footer svg {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .copyright {
+      text-align: center;
+      color: #333;
+      font-size: 0.9rem;
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <div class="nav-section nav-left">
+      <button class="menu-btn">☰</button>
+      <div class="dropdown-menu">
+        <a href="#">🏠 Home</a>
+        <a href="#">💡 Suggestions</a>
+        <a href="#">🆕 New Arrivals</a>
+        <a href="#">📚 Issued Books</a>
+        <a href="#">📥 Returned Books</a>
+        <a href="#">🔑 Change Password</a>
+        <a href="#">🚪 Logout</a>
+      </div>
+    </div>
+    <div class="nav-section nav-center">
+	  <div class="title-time">
+      <span class="library-title">SASTRA Deemed University - Central Library</span>
+      <span class="datetime" id="datetime"></span>
+	  </div>
+    </div>
+    <div></div>
+    <div class="nav-section nav-right">
+    <button class="user-btn">
+	  <span class="user-icon">👤</span>
+	  <span class="user-name">Hamdhan</span>
+	</button>
+      <div class="user-dropdown">
+        <p><strong>Reg No:</strong> 127003081</p>
+        <p><strong>Dept:</strong> Computer Science</p>
+        <p><strong>Designation:</strong> Student</p>
+        <p><strong>Valid Until:</strong> Jun 2027</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="dashboard-section">
+  <div class="quote-box" id="quoteBox"></div>
+
+  <div class="welcome-board">
+    <h2 style="margin-bottom: 0.8rem;">Welcome back, Hamdhan!</h2>
+    <p>📅 Today is <span id="todayDate"></span> — Happy Reading!</p>
+  </div>
+
+  <div class="search-tab">
+	  <input type="text" placeholder="Search books, authors, journals..." class="search-input" />
+
+	  <select class="search-category">
+		<option>All Categories</option>
+		<option>Books</option>
+		<option>Journals</option>
+		<option>Magazines</option>
+		<option>Research Papers</option>
+	  </select>
+
+	  <select class="search-sort">
+		<option>Sort by</option>
+		<option>Title</option>
+		<option>Author</option>
+		<option>Year</option>
+	  </select>
+
+	  <button type="button" class="search-btn">🔍</button>
+	</div>
+
+
+  <div class="card-grid">
+    <div class="card">📖 Recently Read</div>
+    <div class="card">📌 Reserved Books</div>
+    <div class="card">❤ Favorite Books</div>
+    <div class="card">🔥 Popular Reads</div>
+  </div>
+
+  <div class="log-return-fee">
+    <div class="log-box">
+      <h3 style="margin-bottom: 1rem;">📘 Personal Log</h3>
+      <p style="margin-bottom: 0.6rem; margin-left: 1.2em"><strong>Last Login:</strong> Apr 8, 2025 @ 7:45 PM</p>
+      <p style="margin-bottom: 0.6rem; margin-left: 1.2rem"><strong>Last Book Read:</strong> “Deep Learning with PyTorch”</p>
+      <p style="margin-left: 1.2rem"><strong>Recent Action:</strong> Returned “ML Foundations”</p>
+    </div>
+    <div class="return-box">
+      <h3 style="margin-bottom: 1rem;">📦 Books to Return</h3>
+      <ul style="list-style: none; padding-left: 1rem;">
+        <li style="margin-bottom: 0.6rem;"><span>✅</span> “AI Ethics” – Due: Apr 10</li>
+        <li><span>✅</span> “Neural Networks” – Due: Apr 12</li>
+      </ul>
+    </div>
+    <div class="fee-box">
+      <h3 style="margin-bottom: 1rem;">💰 Fee Details</h3>
+      <p style="margin-bottom: 0.6rem; margin-left: 1.2rem"><strong>Total Fine:</strong> ₹150</p>
+      <p style="margin-bottom: 0.6rem; margin-left: 1.2rem"><strong>Paid:</strong> ₹100</p>
+      <p style="margin-left: 1.2rem"><strong>Unpaid:</strong> ₹50</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <svg viewBox="0 0 1600 300" preserveAspectRatio="none">
+    <polygon points="0,300 0,180 200,200 400,185 600,210 800,190 1000,200 1200,190 1400,210 1600,180 1600,300" fill="#e3f3e3"/>
+  </svg>
+  <svg viewBox="0 0 1600 300" preserveAspectRatio="none">
+    <polygon points="0,300 0,200 200,215 400,205 600,220 800,210 1000,220 1200,210 1400,225 1600,200 1600,300" fill="#cbeacc"/>
+  </svg>
+  <svg viewBox="0 0 1600 300" preserveAspectRatio="none">
+    <polygon points="0,300 0,225 200,240 400,230 600,245 800,235 1000,250 1200,240 1400,255 1600,230 1600,300" fill="#b7e2b1"/>
+  </svg>
+  <div class="copyright">
+    © 2025 SASTRA Deemed University - Central Library. All Rights Reserved.
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.search-btn').addEventListener('click', () => {
+    const query = document.querySelector('.search-input').value.trim();
+    const category = document.querySelector('.search-category').value;
+    const sort = document.querySelector('.search-sort').value;
+
+    if (!query) {
+      alert("Please enter a search term.");
+      return;
+    }
+
+    const params = new URLSearchParams({
+      q: query,
+      category,
+      sort
+    });
+
+    window.location.href = `result.html?${params.toString()}`;
+  });
+
+  const quotes = [
+    "Books are a uniquely portable magic — Stephen King",
+    "A library is not a luxury but one of the necessities of life — Henry Ward Beecher",
+    "Reading is to the mind what exercise is to the body — Joseph Addison",
+    "When in doubt, go to the library — Hermione"
+  ];
+  document.getElementById('quoteBox').innerText =
+    quotes[Math.floor(Math.random() * quotes.length)];
+
+  const today = new Date();
+  document.getElementById('todayDate').textContent =
+    today.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+  function updateDateTime() {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    document.getElementById('datetime').textContent = time;
+  }
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+
+  document.querySelector('.menu-btn').addEventListener('click', () => {
+    document.querySelector('.nav-left').classList.toggle('active');
+    document.querySelector('.nav-right').classList.remove('active');
+  });
+
+  document.querySelector('.user-btn').addEventListener('click', () => {
+    document.querySelector('.nav-right').classList.toggle('active');
+    document.querySelector('.nav-left').classList.remove('active');
+  });
+
+  window.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-left')) document.querySelector('.nav-left').classList.remove('active');
+    if (!e.target.closest('.nav-right')) document.querySelector('.nav-right').classList.remove('active');
+  });
+</script>
+
+</body>
+</html>
